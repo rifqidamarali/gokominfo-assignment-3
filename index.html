@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Data Display</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f0f0f0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .status {
+        margin-bottom: 20px;
+      }
+      .status p {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="status" id="water">
+        Water Value: Loading... Water Status: Loading...
+      </div>
+      <div class="status" id="wind">
+        Wind Value: Loading... Wind Status: Loading...
+      </div>
+    </div>
+
+    <script>
+      function fetchData() {
+        fetch("http://localhost:8080/data")
+          .then((response) => response.json())
+          .then((data) => {
+            const water = data.status.water;
+            const wind = data.status.wind;
+
+            let waterStatus, windStatus;
+
+            if (water < 5) {
+              waterStatus = "Aman";
+            } else if (water >= 6 && water <= 8) {
+              waterStatus = "Siaga";
+            } else {
+              waterStatus = "Bahaya";
+            }
+
+            if (wind < 6) {
+              windStatus = "Aman";
+            } else if (wind >= 7 && wind <= 15) {
+              windStatus = "Siaga";
+            } else {
+              windStatus = "Bahaya";
+            }
+            document.getElementById(
+              "water"
+            ).innerHTML = `<p>Water Value: ${water} m. Water Status: <strong>${waterStatus}</strong></p>`;
+            document.getElementById(
+              "wind"
+            ).innerHTML = `<p>Wind Value: ${wind} m/s. Wind Status: <strong>${windStatus}</strong></p>`;
+          })
+          .catch((error) => console.error("Error fetching data:", error));
+      }
+      fetchData();
+      setInterval(fetchData, 15000);
+    </script>
+  </body>
+</html>
